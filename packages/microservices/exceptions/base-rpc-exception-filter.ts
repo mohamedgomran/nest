@@ -2,6 +2,7 @@
 import { ArgumentsHost, Logger, RpcExceptionFilter } from '@nestjs/common';
 import { isObject } from '@nestjs/common/utils/shared.utils';
 import { MESSAGES } from '@nestjs/core/constants';
+import { combineStackTrace } from '@nestjs/core/helpers/combine-stack-trace';
 import { Observable, throwError as _throw } from 'rxjs';
 import { RpcException } from './rpc-exception';
 
@@ -9,8 +10,7 @@ import { RpcException } from './rpc-exception';
  * @publicApi
  */
 export class BaseRpcExceptionFilter<T = any, R = any>
-  implements RpcExceptionFilter<T>
-{
+  implements RpcExceptionFilter<T> {
   private static readonly logger = new Logger('RpcExceptionsHandler');
 
   public catch(exception: T, host: ArgumentsHost): Observable<R> {
@@ -27,7 +27,7 @@ export class BaseRpcExceptionFilter<T = any, R = any>
     const errorMessage = MESSAGES.UNKNOWN_EXCEPTION_MESSAGE;
 
     const loggerArgs = this.isError(exception)
-      ? [exception.message, exception.stack]
+      ? [exception.message, combineStackTrace(exception)]
       : [exception];
     const logger = BaseRpcExceptionFilter.logger;
     logger.error.apply(logger, loggerArgs as any);
