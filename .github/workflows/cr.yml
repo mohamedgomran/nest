@@ -19,7 +19,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           LANGUAGE: English
           OPENAI_API_ENDPOINT: https://api.openai.com/v1
-          MODEL: gpt-4
+          MODEL: gpt-4o
           PROMPT: |
             As a code reviewer, please analyze this PR focusing on these key aspects:
 
