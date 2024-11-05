@@ -1,14 +1,14 @@
 import { ArgumentsHost, Logger, WsExceptionFilter } from '@nestjs/common';
 import { isObject } from '@nestjs/common/utils/shared.utils';
 import { MESSAGES } from '@nestjs/core/constants';
+import { combineStackTrace } from '@nestjs/core/helpers/combine-stack-trace';
 import { WsException } from '../errors/ws-exception';
 
 /**
  * @publicApi
  */
 export class BaseWsExceptionFilter<TError = any>
-  implements WsExceptionFilter<TError>
-{
+  implements WsExceptionFilter<TError> {
   private static readonly logger = new Logger('WsExceptionsHandler');
 
   public catch(exception: TError, host: ArgumentsHost) {
@@ -29,9 +29,9 @@ export class BaseWsExceptionFilter<TError = any>
     const message = isObject(result)
       ? result
       : {
-          status,
-          message: result,
-        };
+        status,
+        message: result,
+      };
 
     client.emit('exception', message);
   }
@@ -49,7 +49,7 @@ export class BaseWsExceptionFilter<TError = any>
     if (this.isExceptionObject(exception)) {
       return BaseWsExceptionFilter.logger.error(
         exception.message,
-        exception.stack,
+        combineStackTrace(exception),
       );
     }
     return BaseWsExceptionFilter.logger.error(exception);
