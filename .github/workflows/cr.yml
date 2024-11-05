@@ -7,12 +7,10 @@ permissions:
 on:
   pull_request:
     types: [opened, reopened, synchronize]
-  issue_comment:
-    types: [created]
 
 jobs:
   test:
-    if: ${{ (github.event_name == 'pull_request' && github.event.action == 'opened') || contains(github.event.comment.body, 'review') }}
+    # if: ${{ (github.event_name == 'pull_request' && github.event.action == 'opened') || contains(github.event.comment.body, 'review') }}
     runs-on: ubuntu-latest
     steps:
       - uses: anc95/ChatGPT-CodeReview@main
@@ -21,8 +19,42 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           LANGUAGE: English
           OPENAI_API_ENDPOINT: https://api.openai.com/v1
-          MODEL: gpt-4o
-          PROMPT: Review the follwing changes, and provide feedback. focus on the code quality, readability, maintainability, performance, security and logical errors.
+          MODEL: gpt-4
+          PROMPT: |
+            As a code reviewer, please analyze this PR focusing on these key aspects:
+
+            Code Quality
+
+            Readability (naming, documentation, code organization)
+            Complexity and maintainability
+            Design patterns and best practices
+            Performance
+
+            Time and space complexity
+            Resource usage and optimization opportunities
+            Database queries and data access patterns
+            Caching considerations
+            Security
+
+            Input validation and sanitization
+            Authentication and authorization
+            Data exposure risks
+            Common security vulnerabilities (XSS, CSRF, SQL injection, etc.)
+            Logic and Business Requirements
+
+            Edge cases and error handling
+            Business rule implementation
+            Integration points
+            Test coverage
+            Please provide:
+
+            Specific issues found, categorized by severity (Critical/High/Medium/Low)
+            Provide code snippets demonstrating suggested improvements
+            Alternative approaches or design considerations where relevant
+            References to documentation or best practices when applicable
+            Focus only on areas needithat needsng improvement
+            Don't mention the good parts
+            Don't mention aspects that look good, don't have any issue or don't need improvment
           top_p: 1 # https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p
           temperature: 1 # https://platform.openai.com/docs/api-reference/chat/create#chat/create-temperature
           max_tokens: 10000
